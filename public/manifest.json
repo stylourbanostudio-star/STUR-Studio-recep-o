@@ -1,0 +1,57 @@
+{
+  "id": "/",
+  "short_name": "StyloUrbano",
+  "name": "Stylo Urbano - Gestão de Studio",
+  "description": "Sistema completo de gestão para studios de dança e bem-estar. Controle de alunos, agenda, financeiro e muito mais.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#121212",
+  "theme_color": "#FF6B00",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["business", "fitness", "productivity"],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Agenda Semanal",
+      "short_name": "Agenda",
+      "description": "Ver cronograma de aulas",
+      "url": "/#calendar",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Lista de Alunos",
+      "short_name": "Alunos",
+      "description": "Gerenciar alunos cadastrados",
+      "url": "/#students",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

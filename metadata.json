@@ -1,0 +1,10 @@
+{
+  "name": "Stylo Urbano Gestão",
+  "description": "Sistema de Gestão Completo para Studios de Dança e Bem-estar. Controle de alunos, agenda inteligente, financeiro e automação.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

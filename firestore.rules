@@ -1,0 +1,201 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required, < 100 chars)
+    //   - email: string (required, email format)
+    //   - role: string (required, enum: Gerente, Recepcionista, Auxiliar de Gerência, Instrutor, Aluno)
+    //   - avatar: string (optional, URL or base64)
+    //
+    // Collection: students
+    // Document ID: {studentId}
+    // Fields:
+    //   - id: string (required)
+    //   - name: string (required, < 100 chars)
+    //   - email: string (required, email format)
+    //   - contact: string (optional)
+    //   - address: string (optional)
+    //   - document: string (optional)
+    //   - birthDate: string (optional, date format)
+    //   - classes: list (optional)
+    //   - turmas: list (optional)
+    //   - status: string (required, enum: active, inactive)
+    //   - paymentStatus: string (required, enum: paid, pending, overdue)
+    //   - joinDate: string (required, date format)
+    //   - planType: string (required, enum: Studio, WellHub, GuruPass, TotalPass)
+    //   - isFavorite: bool (optional)
+    //
+    // Subcollections under /students/{studentId}:
+    //   - attendance: { id, date, present, className, instructor, note }
+    //   - performance: { date, modality, subModalities, score }
+    //   - feedbacks: { id, year, instructor, content, date, time }
+    //   - notes: { id, content, timestamp, instructor }
+    //   - messages: { id, sender, text, timestamp, read }
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        ((exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Gerente') ||
+         (request.auth.token.email in ["stylourbanostudio@gmail.com", "khally.sul@gmail.com"] && request.auth.token.email_verified == true));
+    }
+
+    function isStaff() {
+      return isAuthenticated() &&
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['Gerente', 'Recepcionista', 'Auxiliar de Gerência', 'Instrutor'] ||
+         (request.auth.token.email in ["stylourbanostudio@gmail.com", "khally.sul@gmail.com"] && request.auth.token.email_verified == true));
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidUrl(url) {
+      return url is string && (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'role']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             isValidEmail(data.email) &&
+             data.role in ['Gerente', 'Recepcionista', 'Auxiliar de Gerência', 'Instrutor', 'Aluno'] &&
+             (!('avatar' in data) || data.avatar is string);
+    }
+
+    function isValidStudent(data) {
+      return data.keys().hasAll(['id', 'name', 'email', 'status', 'paymentStatus', 'joinDate', 'planType']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             isValidEmail(data.email) &&
+             data.status in ['active', 'inactive'] &&
+             data.paymentStatus in ['paid', 'pending', 'overdue'] &&
+             data.planType in ['Studio', 'WellHub', 'GuruPass', 'TotalPass'] &&
+             (!('avatar' in data) || data.avatar is string);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && 
+                    (isOwner(userId) || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && 
+                    (isOwner(userId) || isAdmin()) &&
+                    (request.resource.data.role == resource.data.role || isAdmin());
+    }
+
+    match /students/{studentId} {
+      allow read: if isStaff() || isOwner(studentId);
+      allow create: if isStaff();
+      allow update: if isStaff();
+      allow delete: if isAdmin();
+
+      match /attendance/{id} {
+        allow read: if isStaff() || isOwner(studentId);
+        allow write: if isStaff();
+      }
+
+      match /performance/{id} {
+        allow read: if isStaff() || isOwner(studentId);
+        allow write: if isStaff();
+      }
+
+      match /feedbacks/{id} {
+        allow read: if isStaff() || isOwner(studentId);
+        allow write: if isStaff();
+      }
+
+      match /notes/{id} {
+        allow read: if isStaff();
+        allow write: if isStaff();
+      }
+
+      match /messages/{id} {
+        allow read: if isStaff() || isOwner(studentId);
+        allow create: if isAuthenticated() && (isStaff() || isOwner(studentId));
+        allow update: if isAuthenticated() && (isStaff() || isOwner(studentId));
+      }
+    }
+
+    match /events/{eventId} {
+      allow read: if isAuthenticated();
+      allow write: if isStaff();
+    }
+
+    match /global_messages/{messageId} {
+      allow read, list: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    match /payments/{paymentId} {
+      allow read: if isStaff() || (isAuthenticated() && resource.data.studentId == request.auth.uid);
+      allow create: if isStaff();
+      allow update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    match /lesson_plans/{planId} {
+      allow read: if isStaff();
+      allow create: if isStaff();
+      allow update: if isStaff() && resource.data.instructorId == request.auth.uid;
+      allow delete: if isStaff() && resource.data.instructorId == request.auth.uid;
+    }
+
+    match /config/studio {
+      allow read: if true; // Allow public read for studio name/logo on login screen
+      allow write: if isAdmin();
+    }
+
+    // Support for collectionGroup queries
+    match /{path=**}/attendance/{id} {
+      allow read: if isStaff() || (isAuthenticated() && request.auth.uid == path[1]);
+    }
+    match /{path=**}/performance/{id} {
+      allow read: if isStaff() || (isAuthenticated() && request.auth.uid == path[1]);
+    }
+    match /{path=**}/feedbacks/{id} {
+      allow read: if isStaff() || (isAuthenticated() && request.auth.uid == path[1]);
+    }
+    match /{path=**}/notes/{id} {
+      allow read: if isStaff();
+    }
+    match /{path=**}/messages/{id} {
+      allow read: if isStaff() || (isAuthenticated() && request.auth.uid == path[1]);
+      allow write: if isAuthenticated() && (isStaff() || request.auth.uid == path[1]);
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

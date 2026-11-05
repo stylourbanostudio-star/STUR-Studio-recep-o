@@ -1,0 +1,443 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-label: "Manrope", ui-sans-serif, system-ui, sans-serif;
+
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-on-primary: var(--color-on-primary);
+  
+  --color-surface: var(--color-surface);
+  --color-surface-container: var(--color-surface-container);
+  --color-surface-container-low: var(--color-surface-container-low);
+  --color-surface-container-high: var(--color-surface-container-high);
+  --color-surface-container-highest: var(--color-surface-container-highest);
+  
+  --color-on-surface: var(--color-on-surface);
+  --color-on-surface-variant: var(--color-on-surface-variant);
+  --color-outline: var(--color-outline);
+}
+
+:root {
+  --color-primary: #FF6B00;
+  --color-primary-hover: #FF8533;
+  --color-on-primary: #ffffff;
+  
+  --color-surface: #0A0A0A;
+  --color-surface-container: #121212;
+  --color-surface-container-low: #181818;
+  --color-surface-container-high: #242424;
+  --color-surface-container-highest: #2A2A2A;
+  
+  --color-on-surface: #ffffff;
+  --color-on-surface-variant: #A0A0A0;
+  --color-outline: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(18, 18, 18, 0.8);
+}
+
+.light {
+  --color-surface: #F5F5F5;
+  --color-surface-container: #FFFFFF;
+  --color-surface-container-low: #FAFAFA;
+  --color-surface-container-high: #EBEBEB;
+  --color-surface-container-highest: #E0E0E0;
+  
+  --color-on-surface: #1A1A1A;
+  --color-on-surface-variant: #666666;
+  --color-outline: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  color-scheme: light;
+}
+
+/* Light mode typography contrast & text-white adaptation */
+.light input:not([class*="text-"]),
+.light select:not([class*="text-"]),
+.light textarea:not([class*="text-"]) {
+  color: var(--color-on-surface);
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: rgba(102, 102, 102, 0.7);
+}
+
+/* Adapt white text to dark in light mode when not placed on solid colored or dark backgrounds */
+.light .text-white:not(
+  [class*="bg-primary"],
+  [class*="bg-primary"] *,
+  [class*="bg-emerald"],
+  [class*="bg-emerald"] *,
+  [class*="bg-green"],
+  [class*="bg-green"] *,
+  [class*="bg-red"],
+  [class*="bg-red"] *,
+  [class*="bg-rose"],
+  [class*="bg-rose"] *,
+  [class*="bg-amber"],
+  [class*="bg-amber"] *,
+  [class*="bg-blue"],
+  [class*="bg-blue"] *,
+  [class*="bg-indigo"],
+  [class*="bg-indigo"] *,
+  [class*="bg-purple"],
+  [class*="bg-purple"] *,
+  [class*="bg-violet"],
+  [class*="bg-violet"] *,
+  [class*="bg-sky"],
+  [class*="bg-sky"] *,
+  [class*="bg-orange"],
+  [class*="bg-orange"] *,
+  [class*="bg-black"],
+  [class*="bg-black"] *,
+  [class*="bg-slate-900"],
+  [class*="bg-slate-900"] *,
+  [class*="bg-zinc-900"],
+  [class*="bg-zinc-900"] *,
+  [class*="bg-gray-900"],
+  [class*="bg-gray-900"] *,
+  .kinetic-gradient,
+  .kinetic-gradient *,
+  [class*="from-primary"],
+  [class*="from-primary"] *,
+  [class*="from-emerald"],
+  [class*="from-emerald"] *,
+  [class*="from-rose"],
+  [class*="from-rose"] *,
+  [class*="from-amber"],
+  [class*="from-amber"] *
+) {
+  color: var(--color-on-surface) !important;
+}
+
+/* Prevent hover from turning text white in light mode unless a solid background is also applied */
+.light [class*="hover:text-white"]:not(
+  [class*="hover:bg-primary"],
+  [class*="hover:bg-emerald"],
+  [class*="hover:bg-green"],
+  [class*="hover:bg-red"],
+  [class*="hover:bg-rose"],
+  [class*="hover:bg-amber"],
+  [class*="hover:bg-blue"],
+  [class*="hover:bg-indigo"],
+  [class*="hover:bg-purple"],
+  [class*="hover:bg-violet"],
+  [class*="hover:bg-sky"],
+  [class*="hover:bg-orange"],
+  [class*="hover:bg-black"],
+  [class*="bg-primary"],
+  [class*="bg-emerald"],
+  [class*="bg-red"],
+  [class*="bg-amber"]
+):hover {
+  color: var(--color-on-surface) !important;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-body antialiased transition-colors duration-300;
+  }
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--color-outline);
+}
+
+.kinetic-gradient {
+  background: linear-gradient(135deg, #FF6B00 0%, #FF9E00 100%);
+}
+
+.kinetic-glow {
+  box-shadow: 0 0 40px rgba(255, 107, 0, 0.15);
+}
+
+.kinetic-border {
+  border: 1px solid rgba(255, 107, 0, 0.2);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   PRINT STYLESHEET (@media print)
+   Optimized for Financial Reports & Schedule / Agenda Printing
+   ========================================================================== */
+
+/* Utility to hide print elements on screen */
+.print-only {
+  display: none !important;
+}
+
+@media print {
+  /* Global Page Configuration */
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 12mm 12mm;
+  }
+
+  /* Reset colors, backgrounds and shadows */
+  *,
+  *::before,
+  *::after {
+    background-color: transparent !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html,
+  body {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10pt !important;
+    line-height: 1.35 !important;
+    overflow: visible !important;
+  }
+
+  /* Expand all scrolling and fixed containers */
+  #root,
+  .h-screen,
+  .min-h-screen,
+  main,
+  .flex-1,
+  .overflow-hidden,
+  .overflow-y-auto,
+  .overflow-x-auto,
+  .custom-scrollbar {
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    display: block !important;
+    position: static !important;
+    transform: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Hide navigation, toolbars, buttons, dialogs, toasts and non-printable UI */
+  aside,
+  header,
+  nav,
+  .lg\:hidden,
+  .fixed,
+  .pointer-events-none,
+  .animate-float,
+  button,
+  .no-print,
+  .print-hide,
+  [data-sonner-toaster],
+  .sonner-toast,
+  input,
+  select,
+  .custom-select-trigger,
+  .glass-panel::before,
+  .glass-panel::after,
+  .backdrop-blur-sm,
+  .backdrop-blur-md {
+    display: none !important;
+  }
+
+  /* Show elements specifically designed for print */
+  .print-only {
+    display: block !important;
+  }
+
+  .print-only-flex {
+    display: flex !important;
+  }
+
+  .print-only-grid {
+    display: grid !important;
+  }
+
+  .print-only-table {
+    display: table !important;
+  }
+
+  /* Clean containers for printed sheets */
+  .glass-panel,
+  .bg-surface-container,
+  .bg-surface-container-low,
+  .bg-surface-container-high,
+  .bg-surface,
+  .bg-surface-container-highest {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    margin-bottom: 14px !important;
+    padding: 12px 16px !important;
+  }
+
+  /* Table formatting for crisp paper printing */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 9pt !important;
+    margin-top: 6px !important;
+    margin-bottom: 10px !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  thead th {
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+    font-weight: 700 !important;
+    border-top: 1px solid #d1d5db !important;
+    border-bottom: 2px solid #6b7280 !important;
+    padding: 6px 8px !important;
+    text-transform: uppercase !important;
+    font-size: 8pt !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  tbody td {
+    padding: 6px 8px !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    vertical-align: middle !important;
+    font-size: 8.5pt !important;
+  }
+
+  tbody tr:nth-child(even) td {
+    background-color: #f9fafb !important;
+  }
+
+  tfoot td {
+    background-color: #f3f4f6 !important;
+    border-top: 2px solid #6b7280 !important;
+    border-bottom: 2px solid #6b7280 !important;
+    font-weight: 700 !important;
+    padding: 8px !important;
+  }
+
+  /* Page break rules to avoid clipping */
+  tr,
+  tbody tr,
+  .print-avoid-break,
+  .print-metric-card,
+  .print-header-block,
+  .print-footer-block {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    color: #111827 !important;
+    font-family: inherit !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Print metrics grid */
+  .print-metrics-row {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .print-metric-box {
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    background-color: #f9fafb !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Status and Value Highlights */
+  .print-income-value {
+    color: #047857 !important;
+    font-weight: 700 !important;
+  }
+
+  .print-expense-value {
+    color: #b91c1c !important;
+    font-weight: 700 !important;
+  }
+
+  .print-tag {
+    display: inline-block !important;
+    padding: 1px 6px !important;
+    border-radius: 4px !important;
+    font-size: 7.5pt !important;
+    font-weight: 700 !important;
+    border: 1px solid #d1d5db !important;
+    text-transform: uppercase !important;
+    line-height: 1.2 !important;
+  }
+
+  .print-tag-paid {
+    background-color: #ecfdf5 !important;
+    color: #065f46 !important;
+    border-color: #a7f3d0 !important;
+  }
+
+  .print-tag-pending {
+    background-color: #fffbeb !important;
+    color: #92400e !important;
+    border-color: #fde68a !important;
+  }
+
+  .print-tag-class {
+    background-color: #eff6ff !important;
+    color: #1e40af !important;
+    border-color: #bfdbfe !important;
+  }
+
+  .print-tag-event {
+    background-color: #fdf4ff !important;
+    color: #86198f !important;
+    border-color: #f5d0fe !important;
+  }
+
+  /* Printable Report Header */
+  .print-doc-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-bottom: 2px solid #111827 !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 14px !important;
+  }
+
+  /* Printable Report Footer */
+  .print-doc-footer {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-top: 1px solid #d1d5db !important;
+    padding-top: 8px !important;
+    margin-top: 18px !important;
+    font-size: 7.5pt !important;
+    color: #6b7280 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}

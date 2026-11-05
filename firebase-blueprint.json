@@ -1,0 +1,250 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System users (Instructors, Managers, Receptionists)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["Gerente", "Recepção", "Instrutor", "Aluno"] },
+        "avatar": { "type": "string" },
+        "specialties": { "type": "array", "items": { "type": "string" } },
+        "schedules": { 
+          "type": "array", 
+          "items": { 
+            "type": "object",
+            "properties": {
+              "day": { "type": "string" },
+              "start": { "type": "string" },
+              "end": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["id", "name", "email", "role"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Dance studio students",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "contact": { "type": "string" },
+        "address": { "type": "string" },
+        "document": { "type": "string" },
+        "birthDate": { "type": "string", "format": "date" },
+        "classes": { "type": "array", "items": { "type": "string" } },
+        "turmas": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "paymentStatus": { "type": "string", "enum": ["paid", "pending", "overdue"] },
+        "joinDate": { "type": "string", "format": "date" },
+        "planType": { "type": "string", "enum": ["Studio", "WellHub", "GuruPass", "TotalPass"] },
+        "contractedPlan": { "type": "string", "enum": ["Starter", "One", "One2", "Six", "Six2", "Loyalty", "Loyalty2", "Family", "Today Dance", "Wellhub Basic", "Wellhub Basic+", "Wellhub Silver", "Wellhub Silver+", "Wellhub Gold", "Wellhub Gold+", "Wellhub Platinum", "Wellhub Diamond", "Wellhub Diamond+", "TotalPass Active"] },
+        "isFavorite": { "type": "boolean" }
+      },
+      "required": ["id", "name", "email", "status", "paymentStatus", "joinDate", "planType", "contractedPlan"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Student attendance records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "present": { "type": "boolean" },
+        "className": { "type": "string" },
+        "instructor": { "type": "string" },
+        "note": { "type": "string" }
+      },
+      "required": ["id", "studentId", "date", "present", "className", "instructor"]
+    },
+    "Performance": {
+      "title": "Performance",
+      "description": "Student performance scores",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "modality": { "type": "string" },
+        "subModalities": { "type": "array", "items": { "type": "string" } },
+        "score": { "type": "number" }
+      },
+      "required": ["studentId", "date", "modality", "score"]
+    },
+    "Feedback": {
+      "title": "Feedback",
+      "description": "Annual student feedback",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "year": { "type": "integer" },
+        "instructor": { "type": "string" },
+        "content": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "time": { "type": "string" }
+      },
+      "required": ["id", "studentId", "year", "instructor", "content", "date"]
+    },
+    "Note": {
+      "title": "Note",
+      "description": "Instructor notes about a student",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "instructor": { "type": "string" }
+      },
+      "required": ["id", "studentId", "content", "timestamp", "instructor"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Chat messages",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderRole": { "type": "string" },
+        "text": { "type": "string" },
+        "type": { "type": "string", "enum": ["text", "payment"] },
+        "paymentLink": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["id", "senderId", "senderName", "senderRole", "text", "type", "timestamp", "read"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "Studio events and classes",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "instructor": { "type": "string" },
+        "instructorEmail": { "type": "string", "format": "email" },
+        "time": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "capacity": { "type": "integer" },
+        "enrolled": { "type": "integer" },
+        "category": { "type": "string" },
+        "type": { "type": "string", "enum": ["Aula", "Evento", "Feriado", "Alteração"] },
+        "status": { "type": "string", "enum": ["Confirmado", "Pendente", "Aviso Enviado", "Fechado"] },
+        "googleEventId": { "type": "string" }
+      },
+      "required": ["title", "instructor", "time", "date", "type", "status"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Financial transactions (income/expenses)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["paid", "pending", "overdue"] },
+        "method": { "type": "string" },
+        "description": { "type": "string" },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "category": { "type": "string" }
+      },
+      "required": ["id", "date", "amount", "status", "type"]
+    },
+    "LessonPlan": {
+      "title": "LessonPlan",
+      "description": "AI generated lesson plans",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "instructorId": { "type": "string" },
+        "instructorName": { "type": "string" },
+        "modality": { "type": "string" },
+        "level": { "type": "string" },
+        "duration": { "type": "string" },
+        "focus": { "type": "string" },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "instructorId", "modality", "content", "createdAt"]
+    },
+    "StudioConfig": {
+      "title": "StudioConfig",
+      "description": "Global studio settings",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "logo": { "type": "string" },
+        "primaryColor": { "type": "string" },
+        "modalities": { "type": "array", "items": { "type": "string" } },
+        "turmas": { "type": "array", "items": { "type": "string" } },
+        "bankInfo": {
+          "type": "object",
+          "properties": {
+            "bankName": { "type": "string" },
+            "pixKey": { "type": "string" },
+            "holderName": { "type": "string" }
+          }
+        },
+        "setupComplete": { "type": "boolean" }
+      },
+      "required": ["name", "primaryColor", "setupComplete"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "System users profiles"
+    },
+    "/students/{studentId}": {
+      "schema": "Student",
+      "description": "Student profiles"
+    },
+    "/students/{studentId}/attendance/{attendanceId}": {
+      "schema": "Attendance",
+      "description": "Attendance records for a student"
+    },
+    "/students/{studentId}/performance/{performanceId}": {
+      "schema": "Performance",
+      "description": "Performance records for a student"
+    },
+    "/students/{studentId}/feedbacks/{feedbackId}": {
+      "schema": "Feedback",
+      "description": "Annual feedbacks for a student"
+    },
+    "/students/{studentId}/notes/{noteId}": {
+      "schema": "Note",
+      "description": "Instructor notes for a student"
+    },
+    "/students/{studentId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Chat messages for a student"
+    },
+    "/events/{eventId}": {
+      "schema": "Event",
+      "description": "Studio events and classes"
+    },
+    "/global_messages/{messageId}": {
+      "schema": "Message",
+      "description": "Global chat messages for all users"
+    },
+    "/payments/{paymentId}": {
+      "schema": "Payment",
+      "description": "Global financial records"
+    },
+    "/lesson_plans/{planId}": {
+      "schema": "LessonPlan",
+      "description": "AI generated lesson plans for instructors"
+    },
+    "/config/studio": {
+      "schema": "StudioConfig",
+      "description": "Global studio configuration"
+    }
+  }
+}
